@@ -1,0 +1,41 @@
+# baseURL = "https://lynskylate.github.io"
+languageCode = "zh-CN"
+title = "Lynskylate's Blog"
+description = "记录编程的一些心得"
+config = "config.toml"
+tags = ["blog", "programing", "c++"]
+theme = "onepress"
+disqusShortname = "lynskylate"
+copyright = "Copyright © 2019, lynskylate; all rights reserved."
+canonifyURLS = true
+paginate = 12
+
+[params]
+	author = "lynskylate"
+    bio = "Life is short, code lasts forever."
+	logo = "/images/xiaomai.jpg"
+	avatar = "/images/xiaomai.jpg"
+	opengraphImage = "/images/onepress-logo.jpg"
+	enableRSS = true
+
+	customCSS = false
+    readMore = "Read More"
+    
+    # Social
+	github   = "https://github.com/lynskylate"
+    email = "mailto://lynskylate@gmail.com"
+    
+    # Widget
+    widgets = true
+    
+    # Author box and Share button
+    authorCard = false
+    shareButton = true
+    
+    # Code highlighting with highlight.js
+    highlightJS = true
+
+# Taxonomies
+[taxonomies]
+    tag = "tags"
+

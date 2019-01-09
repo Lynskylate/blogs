@@ -1,0 +1,43 @@
+<div class="widgets">
+  <section itemscope itemtype="https://schema.org/Person" class="widget socials">
+    <a href="/about"><h2 class="widget-title">关于咸鱼博主</h2></a>
+    <div class="author-card" itemscope itemprop="author" itemtype="https://schema.org/Person">
+      <div class="author-dp">
+        <img itemprop='image' src="{{ .Site.Params.avatar }}" alt=".Site.Param.name" />
+      </div>
+      <div class="author-bio">
+        {{ if .Site.Params.author }}
+        <h4 class="author-title">
+          {{ .Site.Params.author }} <span itemprop="name"></span>
+        </h4>
+        {{end}}
+        {{ if .Site.Params.bio }}
+        <div class="author-description" itemprop="description">
+          {{ .Site.Params.bio }}
+        </div>
+        {{end}}
+      </div>
+    </div>
+    <h2 class="widget-title">联系我</h2>
+    <ul>
+      {{ if .Site.Params.facebook }}
+      <li><a href="{{ .Site.Params.facebook }}"><i class="fa fa-facebook"></i></a></li>
+      {{ end }}
+      {{ if .Site.Params.twitter }}
+      <li><a href="{{ .Site.Params.twitter }}"><i class="fa fa-twitter"></i></a></li>
+      {{end}}
+      {{ if .Site.Params.linkedin }}
+      <li><a href="{{ .Site.Params.linkedin }}"><i class="fa fa-linkedin"></i></a></li>
+      {{end}}
+      {{ if .Site.Params.github }}
+      <li><a href="{{ .Site.Params.github }}"><i class="fa fa-github"></i></a></li>
+      {{end}}
+      {{ if .Site.Params.github }}
+      <li><a href="{{ .Site.Params.email }}"><i class="fa fa-envelope"></i></a></li>
+      {{end}}
+    </ul>
+  </section>
+
+  <!-- You can add multiple widgets section below -->
+
+</div>
