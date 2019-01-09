@@ -4,7 +4,6 @@ date = 2019-01-09T23:18:43+08:00
 tags = ["envoy", "Service Mesh"]
 description = "本文是matt对于envoy底层线程机制介绍的翻译"
 featuredImage = "https://cdn-images-1.medium.com/max/800/1*mNPG4j0QsUk_4J5milHAKQ.png"
-draft = true
 +++
 # Envoy threading Model
 
