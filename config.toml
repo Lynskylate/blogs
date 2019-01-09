@@ -31,6 +31,7 @@ paginate = 12
     # Author box and Share button
     authorCard = false
     shareButton = true
+    subscribeLink = "/index.xml"
     
     # Code highlighting with highlight.js
     highlightJS = true
