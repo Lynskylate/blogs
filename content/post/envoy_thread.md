@@ -2,8 +2,9 @@
 title = "Envoy的线程模型[翻译]"
 date = 2019-01-09T23:18:43+08:00
 tags = ["envoy", "Service Mesh"]
-description = "本文是matt对于envoy底层线程机制介绍的翻译"
+description = "本文是matt对于envoy底层线程机制介绍的翻译 [原文](https://blog.envoyproxy.io/envoy-threading-model-a8d44b922310)"
 featuredImage = "https://cdn-images-1.medium.com/max/800/1*mNPG4j0QsUk_4J5milHAKQ.png"
+
 +++
 # Envoy threading Model
 
@@ -71,6 +72,42 @@ Envoy的TLS系统工作如下:
 
 ![img](https://cdn-images-1.medium.com/max/800/1*R-U8hs34U93Yj1TzbhwE5w.png)
 
+图3显示了涉及以下组件和步骤的总体流程：
+
+1. 集群管理器(Cluster Manager)在envoy中管理已知上游的集群，包括CDS API， SDS/EDS API DNS 和活跃的健康检查。它负责创建每个上游主机最终一致的视图，上游主机包括了发现的主机和健康统计。	
+2. 健康检查器(Health Checker)进行活跃健康检查，并将健康检查的统计结果返回给集群管理器(Cluster Manager).
+3. CDS/SDS/EDS/DNS 用来决定集群的成员，一旦状态改变会返回给集群管理器(Cluster Manager).
+4. 每个Worker 线程包含一个 Event Loop。
+5. 当集群管理器要改变集群的状态时，它将创建一个集群状态只读的快照(Snapshot), 并将它发送给每一个worker 线程。
+6. 在下一个静止期中，worker线程将更新存在TLS中的快照
+7. 在IO事件需要确定主机如何负载均衡时，负载均衡器(Load Banlancer)将会查询TLS中存有的集群状态信息，这个过程中是无锁的。(TLS也可以触发事件使得负载均衡器和其他组件重新计算高速缓存和数据结构。但这超出了本文的范围)
+
+通过这些过程，Envoy能够处理每个请求而不使用任何锁。除了TLS代码本身的复杂度之外，大部分代码无需理解线程是如何具体工作的，使用单线程的方式即可。这使得大部分代码易于修改且性能较好。
+
+## 其他使用TLS的子系统
+TLS和RCU(Read-Copy Update[^6])在Envoy内广泛使用。
+其他一些例子包括：
+- Runtime (feature flag) overide lookup 运行时覆盖查找:现在的feature flag overide map是在主线程进行计算的。为每个线程提供只读的快照用来实现RCU。
+- Route table swapping 路由表交换:对于RDS提供的路由表，路由表在主线程上实例化。
+然后使用RCU语义为每个工作程序提供只读快照.这使得路由表在原子级别上进行交换。
+- HTTP data header caching http数据头缓存: 事实证明，在每个请求上计算HTTP日期标题非常昂贵。Envoy大约每半秒计算一次日期标题，并通过TLS和RCU将其提供给每个worker线程。
+
+还有其他情况，但前面的例子应该已经足够阐释TLS在envoy中的作用。
+
+## 已知的性能陷阱
+虽然Envoy整体表现相当不错，但是当它以非常高的并发和高吞吐使用时，有一些已知的点需要注意：
+- 正如前文描述的那样，现在当写入日志的内存缓冲区时，所有worker线程都会获得锁，在高并发和吞吐使用时，若要写入最终文件，就会被要求处理所有worker线程的访问日志，这将导致日志的无序。
+- 尽管统计信息已经经过了很多的优化，在非常高的并发性和吞吐量下，个别统计数据仍然可能存在原子争用。解决方案时每个工人进行统计，并定期刷新到中央计数器。
+- 如果Envoy部署在需要大量资源来处理的少量连接的场景下，现有的体系结构将无法正常工作。这是因为无法保证连接在worker 线程之间均匀分布。这可以通过实现再平衡来解决，其中worker 线程能够将连接转发给另一个worker 线程进行处理。
+
+## 总结
+Envoy的线程模型旨在简化编程和提高性能，但如果设置不当，可能会浪费内存和连接使用。Envoy的线程模型允许它在非常高的worker数量和高吞吐量下表现良好。
+
+正如我在Twitter上简略提到的那样，该设计也适合在DPDK之类的完整用户模式网络堆栈上运行，这使得商用服务器在进行完整的L7处理时每秒处理数百万个请求。观察envoy再接下来几年如何进展是一件非常有趣的事情
+。
+最后一个评论：我多次被问到为什么我们为Envoy选择C ++？
+原因是它仍然是唯一广泛部署的生产语言，在该语言中可以构建本文所述的体系结构。C ++当然不适合所有项目，甚至许多项目，但对于某些用例，它仍然是完成工作的唯一工具。
+
 [^1]: 原文 in-memory buffer
 
 [^2]: central "stat store"
@@ -80,6 +117,8 @@ Envoy的TLS系统工作如下:
 [^4]: 原文 slot
 
 [^5]: 原文 Change only happens during the quiescent period between work events
+
+[^6]: 可以查看IBM对RCU的[介绍](https://www.ibm.com/developerworks/cn/linux/l-rcu/)
 
 
 
