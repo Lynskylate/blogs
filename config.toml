@@ -5,6 +5,7 @@ description = "记录编程的一些心得"
 config = "config.toml"
 tags = ["blog", "programing", "c++"]
 theme = "onepress"
+googleAnalytics = "UA-132225586-1"
 disqusShortname = "lynskylate"
 copyright = "Copyright © 2019, lynskylate; all rights reserved."
 canonifyURLS = true
