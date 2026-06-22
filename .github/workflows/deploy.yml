@@ -1,0 +1,53 @@
+name: Deploy Hugo site to lynskylate.github.io
+
+# Build the Hugo site from this repo (Lynskylate/blogs) and publish the
+# generated `public/` directory to the *separate* user-page repository
+# lynskylate/lynskylate.github.io (master branch), which serves
+# https://lynskylate.github.io.
+#
+# Because the destination is a different repository, the default
+# GITHUB_TOKEN is insufficient. We instead authenticate to the target
+# repo with a dedicated SSH deploy key:
+#   - public half is registered as a *write* deploy key on
+#     Lynskylate/lynskylate.github.io
+#   - private half is stored as the repository secret ACTIONS_DEPLOY_KEY
+#     in Lynskylate/blogs
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.161.1'
+          extended: true
+
+      - name: Build site
+        run: hugo --gc
+
+      - name: Deploy to lynskylate.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: lynskylate/lynskylate.github.io
+          publish_branch: master
+          publish_dir: ./public
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy from Lynskylate/blogs@${{ github.sha }}'
