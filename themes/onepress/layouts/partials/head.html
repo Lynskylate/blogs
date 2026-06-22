@@ -4,7 +4,7 @@
 <base href="{{ .Site.BaseURL }}">
 {{ with .Site.Params.author }}<meta name="author" content="{{ . }}">{{ end }}
 {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
-{{ .Hugo.Generator }}
+{{ hugo.Generator }}
 <title>{{ .Title }}</title>
 <link rel="shortcut icon" href="{{ "/images/favicon.ico" | absURL }}" type="">
 <link rel="stylesheet" href="{{ "css/style.css" | absURL }}">
@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 
 {{ if .Site.Params.enableRSS }}
-<link href="{{ .Site.RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
+{{ with .OutputFormats.Get "RSS" }}<link href="{{ .RelPermalink }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" />{{ end }}
 {{ end }}
 
 {{ if .Site.Params.twitter }}
