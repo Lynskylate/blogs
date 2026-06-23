@@ -41,3 +41,8 @@ paginate = 12
 [taxonomies]
     tag = "tags"
 
+# Render raw HTML in markdown (imported posts contain HTML examples / tables)
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+

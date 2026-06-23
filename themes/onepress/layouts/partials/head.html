@@ -40,3 +40,5 @@
 {{ end }}
 
 <link rel="canonical" href="{{ .Permalink }}">
+
+{{ if .Params.math }}{{ partial "math.html" . }}{{ end }}
