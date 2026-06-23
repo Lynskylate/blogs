@@ -45,4 +45,9 @@ paginate = 12
 [markup]
   [markup.goldmark.renderer]
     unsafe = true
+  # Use the theme's highlight.js (light IR_Black theme) instead of Hugo chroma's
+  # dark Monokai — chroma's dark <pre> background clashed with highlight.js's
+  # dark text, producing black-on-black code blocks.
+  [markup.highlight]
+    codeFences = false
 
