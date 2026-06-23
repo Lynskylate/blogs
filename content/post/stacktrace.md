@@ -3,7 +3,7 @@ title = "StackTrace的实现"
 date = 2019-07-06T01:27:34+08:00
 tags = ["backtrace"]
 description = "naive的backtrace实现"
-featuredImage = "https://cdn.nlark.com/yuque/0/2019/png/279676/1562340915972-aa11d229-a85b-4e1f-b355-87698b45e1df.png"
+featuredImage = "/images/stacktrace/02.png"
 +++
 # StackTrace的实现
 
@@ -11,7 +11,7 @@ featuredImage = "https://cdn.nlark.com/yuque/0/2019/png/279676/1562340915972-aa1
 
 在python java这些语言中，一旦程序发生了异常，如下图，会打印异常发生时的调用栈，而在c/c++中如果需要实现类似的功能则要我们依靠libbacktrace之类的库去打印调用栈，
 
-![image.png](https://cdn.nlark.com/yuque/0/2019/png/279676/1562305902441-6803d9fe-cf18-4f6f-9002-3fe3d0e4fadf.png)                                           
+![image.png](/images/stacktrace/01.png)                                           
 
 在c/c++中如何去实现一个类似libbacktrace这样的库来打印函数调用栈呢？本文将介绍一种naive的backtrace实现，讲解backtrace实现的原理。
 
@@ -19,11 +19,11 @@ featuredImage = "https://cdn.nlark.com/yuque/0/2019/png/279676/1562340915972-aa1
 
 栈帧(stack frame)保存着函数调用信息，如下图它存储于c内存布局中的栈区。
 
-![image.png](https://cdn.nlark.com/yuque/0/2019/png/279676/1562340915972-aa11d229-a85b-4e1f-b355-87698b45e1df.png)                                           
+![image.png](/images/stacktrace/02.png)                                           
 
 栈帧是实现backtrace的核心关键，它会存储着函数调用时的局部变量同时记录了函数调用的上下文如返回地址，其具体布局如下图。
 
-![image.png](https://cdn.nlark.com/yuque/0/2019/png/279676/1562341165791-150239ae-ef89-4a36-aba2-ef47c88ddb5d.png)                                           
+![image.png](/images/stacktrace/03.png)                                           
 
 ebp寄存器存储着栈基址指针，esp寄存器存储着当前栈顶指针，我们将ebp-esp之间的内存称为栈帧。
 
@@ -78,7 +78,7 @@ _main:                                  ## @main
 
 如上图我们在32位的程序中可以通过[ebp+4]得到函数的返回地址，同时此时ebp指向的地址的值是保存的ebp值。
 
-![image.png](https://cdn.nlark.com/yuque/0/2019/png/279676/1562346123718-20255897-804d-4f87-ab0a-3b01f0fff147.png)
+![image.png](/images/stacktrace/04.png)
 
 
 
@@ -266,7 +266,7 @@ int main(void){
 
 其结果如下
 
-![image.png](https://cdn.nlark.com/yuque/0/2019/png/279676/1562347223657-40006466-150a-4498-9846-7749fc9877af.png)
+![image.png](/images/stacktrace/05.png)
 
 
 

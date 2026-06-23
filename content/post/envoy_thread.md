@@ -3,7 +3,7 @@ title = "Envoy的线程模型[翻译]"
 date = 2019-01-09T23:18:43+08:00
 tags = ["envoy", "Service Mesh"]
 description = "本文是matt对于envoy底层线程机制介绍的翻译 [原文](https://blog.envoyproxy.io/envoy-threading-model-a8d44b922310)"
-featuredImage = "https://cdn-images-1.medium.com/max/800/1*mNPG4j0QsUk_4J5milHAKQ.png"
+featuredImage = "/images/envoy_thread/01.png"
 
 +++
 # Envoy threading Model
@@ -14,7 +14,7 @@ featuredImage = "https://cdn-images-1.medium.com/max/800/1*mNPG4j0QsUk_4J5milHAK
 
 ## Threading overview
 
-![img](https://cdn-images-1.medium.com/max/800/1*mNPG4j0QsUk_4J5milHAKQ.png)
+![img](/images/envoy_thread/01.png)
 
 Figure 1: Threading overview
 
@@ -53,7 +53,7 @@ Figure 1: Threading overview
 
 如已经描述的那样，主线程基本上处理Envoy过程中的所有管理/控制平面功能。（控制平面在这里有点过载，但在特使程序本身考虑并与工人做的转发进行比较时，似乎是合适的）。主线程进程执行某些操作是一种常见模式，然后需要使用该工作的结果更新每个工作线程，并且工作线程不需要在每次访问时获取锁定
 
-![img](https://cdn-images-1.medium.com/max/1000/1*fyx9IJBwbGDVtK_LhwQB6A.png)
+![img](/images/envoy_thread/02.png)
 
 Envoy的TLS系统工作如下:
 
@@ -70,7 +70,7 @@ Envoy的TLS系统工作如下:
 
 在本节中，我将描述TLS如何用于集群管理。群集管理包括xDS API处理和DNS以及运行状况检查。
 
-![img](https://cdn-images-1.medium.com/max/800/1*R-U8hs34U93Yj1TzbhwE5w.png)
+![img](/images/envoy_thread/03.png)
 
 图3显示了涉及以下组件和步骤的总体流程：
 
